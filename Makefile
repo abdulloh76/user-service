@@ -7,7 +7,7 @@ GO := go
 CC := aarch64-linux-gnu-gcc
 GCCGO := aarch64-linux-gnu-gccgo-10
 
-run-containers:
+run-docker:
 	docker-compose --env-file ./dev.env up
 build-cmd:
 	go build -o bin/main -v cmd/main.go

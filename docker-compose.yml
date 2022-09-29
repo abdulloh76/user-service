@@ -2,15 +2,15 @@ version: '3.8'
 
 services:
   dynamodb:
-    image: amazon/dynamodb-local
-    container_name: dynamodb
+    image:  amazon/dynamodb-local
+    container_name: my-dynamodb
     hostname: dynamodb
-    restart: on-failure
+    restart: always
     volumes:
-      -  dynamodb:/var/lib/dynamodb/data
+      -  ./my-dynamodb-data:/home/dynamodblocal/data
     ports:
-      - "${DYNAMODB_PORT}:${DYNAMODB_PORT}"
+      - 8000:8000
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/"
     
 volumes:
-  postgresdb: null
+  dynamodblocal: null
