@@ -120,7 +120,7 @@ func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.User) 
 	}
 
 	updatedUser := types.User{}
-	err = attributevalue.Unmarshal(response.Attributes, updatedUser)
+	err = attributevalue.UnmarshalMap(response.Attributes, updatedUser)
 	if err != nil {
 		return nil, fmt.Errorf("error putting item %w", err)
 	}
