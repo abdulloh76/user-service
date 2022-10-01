@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package userGrpc;
+option go_package = "handlers/userGrpc";
+
+service Get {
+  rpc GetUserDetails (GetRequest) returns (GetResponse) {}
+  rpc CreateUser (GetRequest) returns (GetResponse) {}
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message GetResponse {
+  string name = 1;
+  string email = 2;
+}
