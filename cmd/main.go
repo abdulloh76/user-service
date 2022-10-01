@@ -14,10 +14,11 @@ import (
 func main() {
 	DYNAMODB_PORT := os.Getenv("DYNAMODB_PORT")
 	PORT := os.Getenv("PORT")
+	tableName := "users"
 
 	router := gin.Default()
 
-	dynamoDB := store.NewDynamoDBStore(context.TODO(), DYNAMODB_PORT)
+	dynamoDB := store.NewDynamoDBStore(context.TODO(), DYNAMODB_PORT, tableName)
 	domain := domain.NewUsersDomain(dynamoDB)
 	handler := handlers.NewGinAPIHandler(domain)
 

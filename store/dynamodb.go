@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/teris-io/shortid"
 
 	"github.com/abdulloh76/user-service/types"
 )
@@ -21,8 +22,14 @@ type DynamoDBStore struct {
 
 var _ types.UserStore = (*DynamoDBStore)(nil)
 
-func NewDynamoDBStore(ctx context.Context, tableName string) *DynamoDBStore {
-	cfg, err := config.LoadDefaultConfig(ctx)
+func NewDynamoDBStore(ctx context.Context, DYNAMODB_PORT, tableName string) *DynamoDBStore {
+	cfg, err := config.LoadDefaultConfig(ctx,
+		config.WithRegion("localhost"),
+		config.WithEndpointResolver(aws.EndpointResolverFunc(
+			func(service, region string) (aws.Endpoint, error) {
+				return aws.Endpoint{URL: "http://localhost:" + DYNAMODB_PORT}, nil
+			})))
+
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)
 	}
@@ -83,11 +90,14 @@ func (d *DynamoDBStore) Get(ctx context.Context, id string) (*types.User, error)
 	return &user, nil
 }
 
-func (d *DynamoDBStore) Create(ctx context.Context, user types.User) error {
+func (d *DynamoDBStore) Create(ctx context.Context, user types.UserBody) error {
 	item, err := attributevalue.MarshalMap(&user)
 	if err != nil {
 		return fmt.Errorf("unable to marshal user: %w", err)
 	}
+
+	id, _ := shortid.Generate()
+	item["id"] = &ddbtypes.AttributeValueMemberS{Value: id}
 
 	_, err = d.client.PutItem(ctx, &dynamodb.PutItemInput{
 		TableName: &d.tableName,
@@ -101,28 +111,36 @@ func (d *DynamoDBStore) Create(ctx context.Context, user types.User) error {
 	return nil
 }
 
-func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.User) (*types.User, error) {
-	item, err := attributevalue.MarshalMap(&user)
-	if err != nil {
-		return nil, fmt.Errorf("unable to marshal user: %w", err)
-	}
+func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.UserBody) (*types.User, error) {
+	// item, err := attributevalue.MarshalMap(&user)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("unable to marshal user: %w", err)
+	// }
 
-	response, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+	_, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
 		TableName: &d.tableName,
 		Key: map[string]ddbtypes.AttributeValue{
 			"id": &ddbtypes.AttributeValueMemberS{Value: id},
 		},
-		ExpressionAttributeValues: item,
+		ExpressionAttributeNames: map[string]string{
+			"#name":  "Name",
+			"#email": "Email",
+		},
+		ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
+			":Name":  &ddbtypes.AttributeValueMemberS{Value: user.Name},
+			":Email": &ddbtypes.AttributeValueMemberS{Value: user.Email},
+		},
+		UpdateExpression: aws.String("set #name = :Name, #email = :Email"),
 	})
 
 	if err != nil {
 		return nil, fmt.Errorf("cannot put item: %w", err)
 	}
 
-	updatedUser := types.User{}
-	err = attributevalue.UnmarshalMap(response.Attributes, updatedUser)
-	if err != nil {
-		return nil, fmt.Errorf("error putting item %w", err)
+	updatedUser := types.User{
+		ID:    id,
+		Name:  user.Name,
+		Email: user.Email,
 	}
 
 	return &updatedUser, nil
