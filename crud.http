@@ -1,0 +1,39 @@
+@rootUrl = http://localhost:8080
+
+get {{rootUrl}}/user
+
+###
+get {{rootUrl}}/user/Rjxim54Vg
+
+###
+post {{rootUrl}}/user
+Content-Type: application/json
+
+{
+  "name": "Sherlock Holmes",
+	"email": "sher@lock.com",
+	"address": {
+		"street": "221B Baker Street",
+		"city": "London",
+		"postCode": "NR24 5WQ",
+		"country": "UK"
+	}
+}
+
+###
+put {{rootUrl}}/user/YPSkFcVVg
+Content-Type: application/json
+
+{
+  "name": "John Wick",
+	"email": "john@wick.com",
+	"address": {
+		"street": "19 Brooklyn",
+		"city": "New York",
+		"postCode": "E1 3EZ",
+		"country": "USA"
+	}
+}
+
+###
+delete {{rootUrl}}/user/YPSkFcVVg
