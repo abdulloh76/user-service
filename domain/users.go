@@ -35,7 +35,6 @@ func (u *Users) GetUser(ctx context.Context, id string) (*types.User, error) {
 }
 
 func (u *Users) AllUsers(ctx context.Context) ([]types.User, error) {
-	// todo add dto for getAll
 	allUsers, err := u.store.All(ctx)
 	if err != nil {
 		return allUsers, err
@@ -44,9 +43,8 @@ func (u *Users) AllUsers(ctx context.Context) ([]types.User, error) {
 	return allUsers, nil
 }
 
-func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.User, error) {
-	// todo add dto for create
-	user := types.User{}
+func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.UserBody, error) {
+	user := types.UserBody{}
 	if err := json.Unmarshal(body, &user); err != nil {
 		return nil, ErrJsonUnmarshal
 	}
@@ -60,7 +58,7 @@ func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.User, error
 }
 
 func (u *Users) ModifyUser(ctx context.Context, id string, body []byte) (*types.User, error) {
-	modifiedUser := types.User{}
+	modifiedUser := types.UserBody{}
 	if err := json.Unmarshal(body, &modifiedUser); err != nil {
 		return nil, ErrJsonUnmarshal
 	}
