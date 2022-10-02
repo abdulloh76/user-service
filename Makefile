@@ -9,7 +9,12 @@ GCCGO := aarch64-linux-gnu-gccgo-10
 
 run-docker:
 	docker-compose --env-file ./dev.env up
-build-cmd:
-	go build -o bin/main -v cmd/main.go
-run-cmd:
-	bin/main
+build-server:
+	go build -o bin/server/main -v cmd/server/main.go
+run-server:
+	bin/server/main
+build-grpc:
+	go build -o bin/grpcserver/main -v cmd/grpcserver/main.go
+run-grpc:
+	bin/grpcserver/main
+

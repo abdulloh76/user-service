@@ -1,16 +1,17 @@
-@rootUrl = http://localhost:8080
+@rootUrl = http://localhost:8081
 
 get {{rootUrl}}/user
 
 ###
-get {{rootUrl}}/user/Rjxim54Vg
+get {{rootUrl}}/user/gFfuWoVVR
 
 ###
 post {{rootUrl}}/user
 Content-Type: application/json
 
 {
-  "name": "Sherlock Holmes",
+  "firstName": "Sherlock",
+  "lastName": "Holmes",
 	"email": "sher@lock.com",
 	"address": {
 		"street": "221B Baker Street",
@@ -21,11 +22,12 @@ Content-Type: application/json
 }
 
 ###
-put {{rootUrl}}/user/YPSkFcVVg
+put {{rootUrl}}/user/U0AJHoV4g
 Content-Type: application/json
 
 {
-  "name": "John Wick",
+	"firstName": "John",
+  "lastName": "Wick",
 	"email": "john@wick.com",
 	"address": {
 		"street": "19 Brooklyn",
@@ -36,4 +38,4 @@ Content-Type: application/json
 }
 
 ###
-delete {{rootUrl}}/user/YPSkFcVVg
+delete {{rootUrl}}/user/U0AJHoV4g
