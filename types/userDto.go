@@ -1,6 +1,8 @@
 package types
 
 type UserBody struct {
-	Name  string `dynamodbav:"name" json:"name"`
-	Email string `dynamodbav:"email" json:"email"`
+	FirstName string       `dynamodbav:"firstName" json:"firstName"`
+	LastName  string       `dynamodbav:"lastName" json:"lastName"`
+	Email     string       `dynamodbav:"email" json:"email"`
+	Address   AddressModel `dynamodbav:"address" json:"address"`
 }

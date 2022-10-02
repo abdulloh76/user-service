@@ -112,38 +112,31 @@ func (d *DynamoDBStore) Create(ctx context.Context, user types.UserBody) error {
 }
 
 func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.UserBody) (*types.User, error) {
-	// item, err := attributevalue.MarshalMap(&user)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("unable to marshal user: %w", err)
-	// }
+	address, _ := attributevalue.MarshalMap(user.Address)
 
-	_, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+	response, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
 		TableName: &d.tableName,
 		Key: map[string]ddbtypes.AttributeValue{
 			"id": &ddbtypes.AttributeValueMemberS{Value: id},
 		},
-		ExpressionAttributeNames: map[string]string{
-			"#name":  "Name",
-			"#email": "Email",
-		},
 		ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
-			":Name":  &ddbtypes.AttributeValueMemberS{Value: user.Name},
-			":Email": &ddbtypes.AttributeValueMemberS{Value: user.Email},
+			":fn":  &ddbtypes.AttributeValueMemberS{Value: user.FirstName},
+			":ln":  &ddbtypes.AttributeValueMemberS{Value: user.LastName},
+			":e":   &ddbtypes.AttributeValueMemberS{Value: user.Email},
+			":add": &ddbtypes.AttributeValueMemberM{Value: address},
 		},
-		UpdateExpression: aws.String("set #name = :Name, #email = :Email"),
+		UpdateExpression: aws.String("set firstName=:fn, lastName=:ln, email=:e, address=:add"),
+		ReturnValues:     "ALL_NEW",
 	})
 
 	if err != nil {
 		return nil, fmt.Errorf("cannot put item: %w", err)
 	}
 
-	updatedUser := types.User{
-		ID:    id,
-		Name:  user.Name,
-		Email: user.Email,
-	}
+	updatedUser := &types.User{}
+	attributevalue.UnmarshalMap(response.Attributes, &updatedUser)
 
-	return &updatedUser, nil
+	return updatedUser, nil
 }
 
 func (d *DynamoDBStore) Delete(ctx context.Context, id string) error {
