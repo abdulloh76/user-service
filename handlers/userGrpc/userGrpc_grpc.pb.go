@@ -18,122 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GetClient is the client API for Get service.
+// UserClient is the client API for User service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GetClient interface {
+type UserClient interface {
 	GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	CreateUser(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	GetUserAddress(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Address, error)
 }
 
-type getClient struct {
+type userClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGetClient(cc grpc.ClientConnInterface) GetClient {
-	return &getClient{cc}
+func NewUserClient(cc grpc.ClientConnInterface) UserClient {
+	return &userClient{cc}
 }
 
-func (c *getClient) GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+func (c *userClient) GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/userGrpc.Get/GetUserDetails", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/userGrpc.User/GetUserDetails", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *getClient) CreateUser(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
-	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/userGrpc.Get/CreateUser", in, out, opts...)
+func (c *userClient) GetUserAddress(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Address, error) {
+	out := new(Address)
+	err := c.cc.Invoke(ctx, "/userGrpc.User/GetUserAddress", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GetServer is the server API for Get service.
-// All implementations must embed UnimplementedGetServer
+// UserServer is the server API for User service.
+// All implementations must embed UnimplementedUserServer
 // for forward compatibility
-type GetServer interface {
+type UserServer interface {
 	GetUserDetails(context.Context, *GetRequest) (*GetResponse, error)
-	CreateUser(context.Context, *GetRequest) (*GetResponse, error)
-	mustEmbedUnimplementedGetServer()
+	GetUserAddress(context.Context, *GetRequest) (*Address, error)
+	mustEmbedUnimplementedUserServer()
 }
 
-// UnimplementedGetServer must be embedded to have forward compatible implementations.
-type UnimplementedGetServer struct {
+// UnimplementedUserServer must be embedded to have forward compatible implementations.
+type UnimplementedUserServer struct {
 }
 
-func (UnimplementedGetServer) GetUserDetails(context.Context, *GetRequest) (*GetResponse, error) {
+func (UnimplementedUserServer) GetUserDetails(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDetails not implemented")
 }
-func (UnimplementedGetServer) CreateUser(context.Context, *GetRequest) (*GetResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+func (UnimplementedUserServer) GetUserAddress(context.Context, *GetRequest) (*Address, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserAddress not implemented")
 }
-func (UnimplementedGetServer) mustEmbedUnimplementedGetServer() {}
+func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
-// UnsafeGetServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GetServer will
+// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServer will
 // result in compilation errors.
-type UnsafeGetServer interface {
-	mustEmbedUnimplementedGetServer()
+type UnsafeUserServer interface {
+	mustEmbedUnimplementedUserServer()
 }
 
-func RegisterGetServer(s grpc.ServiceRegistrar, srv GetServer) {
-	s.RegisterService(&Get_ServiceDesc, srv)
+func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
+	s.RegisterService(&User_ServiceDesc, srv)
 }
 
-func _Get_GetUserDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_GetUserDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GetServer).GetUserDetails(ctx, in)
+		return srv.(UserServer).GetUserDetails(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userGrpc.Get/GetUserDetails",
+		FullMethod: "/userGrpc.User/GetUserDetails",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GetServer).GetUserDetails(ctx, req.(*GetRequest))
+		return srv.(UserServer).GetUserDetails(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Get_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_GetUserAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GetServer).CreateUser(ctx, in)
+		return srv.(UserServer).GetUserAddress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userGrpc.Get/CreateUser",
+		FullMethod: "/userGrpc.User/GetUserAddress",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GetServer).CreateUser(ctx, req.(*GetRequest))
+		return srv.(UserServer).GetUserAddress(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Get_ServiceDesc is the grpc.ServiceDesc for Get service.
+// User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Get_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "userGrpc.Get",
-	HandlerType: (*GetServer)(nil),
+var User_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "userGrpc.User",
+	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetUserDetails",
-			Handler:    _Get_GetUserDetails_Handler,
+			Handler:    _User_GetUserDetails_Handler,
 		},
 		{
-			MethodName: "CreateUser",
-			Handler:    _Get_CreateUser_Handler,
+			MethodName: "GetUserAddress",
+			Handler:    _User_GetUserAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
