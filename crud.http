@@ -1,0 +1,41 @@
+@rootUrl = http://localhost:8081
+
+get {{rootUrl}}/user
+
+###
+get {{rootUrl}}/user/gFfuWoVVR
+
+###
+post {{rootUrl}}/user
+Content-Type: application/json
+
+{
+  "firstName": "Sherlock",
+  "lastName": "Holmes",
+	"email": "sher@lock.com",
+	"address": {
+		"street": "221B Baker Street",
+		"city": "London",
+		"postCode": "NR24 5WQ",
+		"country": "UK"
+	}
+}
+
+###
+put {{rootUrl}}/user/U0AJHoV4g
+Content-Type: application/json
+
+{
+	"firstName": "John",
+  "lastName": "Wick",
+	"email": "john@wick.com",
+	"address": {
+		"street": "19 Brooklyn",
+		"city": "New York",
+		"postCode": "E1 3EZ",
+		"country": "USA"
+	}
+}
+
+###
+delete {{rootUrl}}/user/U0AJHoV4g
