@@ -1,0 +1,15 @@
+{
+  "body": "{\"email\":\"johnwick@mail.com\",\"password\":\"password\"}",
+  "resource": "/",
+  "path": "/signup",
+  "httpMethod": "POST",
+  "isBase64Encoded": true,
+  "queryStringParameters": {
+    "foo": "bar"
+  },
+  "multiValueQueryStringParameters": {
+    "foo": [
+      "bar"
+    ]
+  }
+}
