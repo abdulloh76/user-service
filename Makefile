@@ -1,5 +1,7 @@
 .PHONY: clean build deploy
 
+FUNCTIONS := authorizer signin signup
+
 # To try different version of Go
 GO := go
 
@@ -17,4 +19,19 @@ build-grpc:
 	go build -o bin/grpcserver/main -v cmd/grpcserver/main.go
 run-grpc:
 	bin/grpcserver/main
+
+
+build-lambdas:
+	${MAKE} ${MAKEOPTS} $(foreach function,${FUNCTIONS}, build-${function})
+
+clean:
+	@rm $(foreach function,${FUNCTIONS}, functions/${function}/bootstrap)
+
+
+invoke-authorizer:
+	@sam local invoke --env-vars env-vars.json --event functions/authorizer/event.json AuthMiddlewareFunction
+invoke-signin:
+	@sam local invoke --env-vars env-vars.json --event functions/signin/event.json SignInFunction
+invoke-signup:
+	@sam local invoke --env-vars env-vars.json --event functions/signup/event.json SignUpFunction
 
