@@ -6,10 +6,10 @@ import (
 	"net"
 	"os"
 
-	"github.com/abdulloh76/user-service/domain"
-	"github.com/abdulloh76/user-service/handlers"
-	"github.com/abdulloh76/user-service/handlers/userGrpc"
-	"github.com/abdulloh76/user-service/store"
+	"github.com/abdulloh76/user-service/pkg/domain"
+	"github.com/abdulloh76/user-service/pkg/handlers"
+	"github.com/abdulloh76/user-service/pkg/handlers/userGrpc"
+	"github.com/abdulloh76/user-service/pkg/store"
 	"google.golang.org/grpc"
 )
 

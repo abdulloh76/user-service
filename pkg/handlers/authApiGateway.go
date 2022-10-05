@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/abdulloh76/user-service/domain"
-	"github.com/abdulloh76/user-service/utils"
+	"github.com/abdulloh76/user-service/pkg/domain"
+	"github.com/abdulloh76/user-service/pkg/utils"
 	"github.com/aws/aws-lambda-go/events"
 )
 

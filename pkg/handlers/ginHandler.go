@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/abdulloh76/user-service/domain"
-	"github.com/abdulloh76/user-service/utils"
+	"github.com/abdulloh76/user-service/pkg/domain"
+	"github.com/abdulloh76/user-service/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 

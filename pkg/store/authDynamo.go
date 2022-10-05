@@ -11,8 +11,8 @@ import (
 	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/teris-io/shortid"
 
-	"github.com/abdulloh76/user-service/types"
-	"github.com/abdulloh76/user-service/utils"
+	"github.com/abdulloh76/user-service/pkg/types"
+	"github.com/abdulloh76/user-service/pkg/utils"
 )
 
 type AuthDynamoStore struct {

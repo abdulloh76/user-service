@@ -3,8 +3,8 @@ package handlers
 import (
 	"context"
 
-	"github.com/abdulloh76/user-service/domain"
-	"github.com/abdulloh76/user-service/handlers/userGrpc"
+	"github.com/abdulloh76/user-service/pkg/domain"
+	"github.com/abdulloh76/user-service/pkg/handlers/userGrpc"
 )
 
 // GRPCServer ...

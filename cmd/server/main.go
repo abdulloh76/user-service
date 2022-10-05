@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 
-	"github.com/abdulloh76/user-service/domain"
-	"github.com/abdulloh76/user-service/handlers"
-	"github.com/abdulloh76/user-service/store"
+	"github.com/abdulloh76/user-service/pkg/domain"
+	"github.com/abdulloh76/user-service/pkg/handlers"
+	"github.com/abdulloh76/user-service/pkg/store"
 	"github.com/gin-gonic/gin"
 )
 

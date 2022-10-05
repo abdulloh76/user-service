@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/abdulloh76/user-service/types"
-	"github.com/abdulloh76/user-service/utils"
+	"github.com/abdulloh76/user-service/pkg/types"
+	"github.com/abdulloh76/user-service/pkg/utils"
 )
 
 type Users struct {
