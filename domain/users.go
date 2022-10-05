@@ -3,14 +3,9 @@ package domain
 import (
 	"context"
 	"encoding/json"
-	"errors"
 
 	"github.com/abdulloh76/user-service/types"
-)
-
-var (
-	ErrJsonUnmarshal = errors.New("failed to parse user from request body")
-	ErrUserNotFound  = errors.New("user with given ID not found")
+	"github.com/abdulloh76/user-service/utils"
 )
 
 type Users struct {
@@ -26,7 +21,7 @@ func NewUsersDomain(d types.UserStore) *Users {
 func (u *Users) GetUser(ctx context.Context, id string) (*types.User, error) {
 	user, err := u.store.Get(ctx, id)
 	if user.ID == "" {
-		return nil, ErrUserNotFound
+		return nil, utils.ErrUserNotFound
 	}
 	if err != nil {
 		return nil, err
@@ -46,7 +41,7 @@ func (u *Users) AllUsers(ctx context.Context) ([]types.User, error) {
 func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.UserBody, error) {
 	user := types.UserBody{}
 	if err := json.Unmarshal(body, &user); err != nil {
-		return nil, ErrJsonUnmarshal
+		return nil, utils.ErrJsonUnmarshal
 	}
 
 	err := u.store.Create(ctx, user)
@@ -60,7 +55,7 @@ func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.UserBody, e
 func (u *Users) ModifyUser(ctx context.Context, id string, body []byte) (*types.User, error) {
 	modifiedUser := types.UserBody{}
 	if err := json.Unmarshal(body, &modifiedUser); err != nil {
-		return nil, ErrJsonUnmarshal
+		return nil, utils.ErrJsonUnmarshal
 	}
 
 	updatedUser, err := u.store.Update(ctx, id, modifiedUser)
