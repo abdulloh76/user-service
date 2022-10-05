@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/abdulloh76/user-service/domain"
+	"github.com/abdulloh76/user-service/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,7 +46,7 @@ func (g *GinAPIHandler) GetHandler(context *gin.Context) {
 
 	user, err := g.users.GetUser(context, id)
 
-	if errors.Is(err, domain.ErrUserNotFound) {
+	if errors.Is(err, utils.ErrUserNotFound) {
 		context.AbortWithStatusJSON(http.StatusNotFound, map[string]string{
 			"message": err.Error(),
 		})
@@ -71,7 +72,7 @@ func (g *GinAPIHandler) CreateHandler(context *gin.Context) {
 	}
 
 	newUser, err := g.users.CreateUser(context, body)
-	if errors.Is(err, domain.ErrJsonUnmarshal) {
+	if errors.Is(err, utils.ErrJsonUnmarshal) {
 		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
 			"message": err.Error(),
 		})
@@ -96,13 +97,13 @@ func (g *GinAPIHandler) PutHandler(context *gin.Context) {
 	}
 
 	updatedUser, err := g.users.ModifyUser(context, id, body)
-	if errors.Is(err, domain.ErrUserNotFound) {
+	if errors.Is(err, utils.ErrUserNotFound) {
 		context.AbortWithStatusJSON(http.StatusNotFound, map[string]string{
 			"message": err.Error(),
 		})
 		return
 	}
-	if errors.Is(err, domain.ErrJsonUnmarshal) {
+	if errors.Is(err, utils.ErrJsonUnmarshal) {
 		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
 			"message": err.Error(),
 		})
@@ -122,7 +123,7 @@ func (g *GinAPIHandler) DeleteHandler(context *gin.Context) {
 	id := context.Param("id")
 
 	err := g.users.DeleteUser(context, id)
-	if errors.Is(err, domain.ErrUserNotFound) {
+	if errors.Is(err, utils.ErrUserNotFound) {
 		context.AbortWithStatusJSON(http.StatusNotFound, map[string]string{
 			"message": err.Error(),
 		})

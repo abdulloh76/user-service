@@ -1,0 +1,12 @@
+{
+  "body": "{\"email\":\"johnwick@mail.com\",\"password\":\"password\",\"firstName\":\"John Wick\"}",
+  "isBase64Encoded": true,
+  "queryStringParameters": {
+    "foo": "bar"
+  },
+  "multiValueQueryStringParameters": {
+    "foo": [
+      "bar"
+    ]
+  }
+}

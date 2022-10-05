@@ -9,3 +9,8 @@ type UserStore interface {
 	Update(ctx context.Context, id string, user UserBody) (*User, error)
 	Delete(ctx context.Context, id string) error
 }
+
+type AuthStore interface {
+	CreateUser(ctx context.Context, userCredentials UserCredentials) (string, error)
+	GetUser(ctx context.Context, email, passwordHash string) (*User, error)
+}
