@@ -3,10 +3,12 @@ module github.com/abdulloh76/user-service
 go 1.18
 
 require (
+	github.com/aws/aws-lambda-go v1.34.1
 	github.com/aws/aws-sdk-go-v2 v1.16.16
 	github.com/aws/aws-sdk-go-v2/config v1.17.7
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.1
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.8.1
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	google.golang.org/grpc v1.49.0

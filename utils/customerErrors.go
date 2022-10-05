@@ -9,4 +9,7 @@ var (
 	ErrUserNotExists = errors.New("no user with this email, please create one")
 	ErrWrongPassword = errors.New("password did not match")
 	ErrWithDB        = errors.New("db error")
+
+	ErrInvalidJWTMethod   = errors.New("invalid signing method")
+	ErrInvalidTokenClaims = errors.New("token claims are not of type *tokenClaims")
 )
