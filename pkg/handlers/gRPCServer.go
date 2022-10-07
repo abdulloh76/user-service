@@ -7,7 +7,6 @@ import (
 	"github.com/abdulloh76/user-service/pkg/handlers/userGrpc"
 )
 
-// GRPCServer ...
 type GRPCServer struct {
 	users *domain.Users
 	userGrpc.UnimplementedUserServer
@@ -19,15 +18,24 @@ func NewGRPCServer(d *domain.Users) *GRPCServer {
 	}
 }
 
-func (s *GRPCServer) GetUserDetails(ctx context.Context, req *userGrpc.GetRequest) (*userGrpc.GetResponse, error) {
-	return &userGrpc.GetResponse{
-		Name:  "Sherlock",
-		Email: "sher@lock.com",
+func (s *GRPCServer) GetUserDetails(ctx context.Context, req *userGrpc.GetRequest) (*userGrpc.UserDetails, error) {
+	id := req.GetId()
+
+	user, err := s.users.GetUser(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &userGrpc.UserDetails{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
 		Address: &userGrpc.Address{
-			Street:   "221B Baker Street",
-			City:     "London",
-			PostCode: "NR24 5WQ",
-			Country:  "UK",
+			Street:   user.Address.Street,
+			City:     user.Address.City,
+			PostCode: user.Address.PostCode,
+			Country:  user.Address.Country,
 		},
 	}, nil
 }
