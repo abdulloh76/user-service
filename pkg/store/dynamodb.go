@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -13,6 +12,7 @@ import (
 	"github.com/teris-io/shortid"
 
 	"github.com/abdulloh76/user-service/pkg/types"
+	"github.com/abdulloh76/user-service/pkg/utils"
 )
 
 type DynamoDBStore struct {
@@ -42,7 +42,7 @@ func NewDynamoDBStore(ctx context.Context, DYNAMODB_PORT, tableName string) *Dyn
 	}
 }
 
-func (d *DynamoDBStore) All(ctx context.Context) ([]types.User, error) {
+func (d *DynamoDBStore) AllUsers(ctx context.Context) ([]types.User, error) {
 	users := []types.User{}
 
 	input := &dynamodb.ScanInput{
@@ -53,18 +53,18 @@ func (d *DynamoDBStore) All(ctx context.Context) ([]types.User, error) {
 	result, err := d.client.Scan(ctx, input)
 
 	if err != nil {
-		return users, fmt.Errorf("failed to get items from DynamoDB: %w", err)
+		return nil, utils.ErrWithDB
 	}
 
 	err = attributevalue.UnmarshalListOfMaps(result.Items, &users)
 	if err != nil {
-		return users, fmt.Errorf("failed to unmarshal data from DynamoDB: %w", err)
+		return users, utils.ErrWithDB
 	}
 
 	return users, nil
 }
 
-func (d *DynamoDBStore) Get(ctx context.Context, id string) (*types.User, error) {
+func (d *DynamoDBStore) GetUserDetails(ctx context.Context, id string) (*types.User, error) {
 	response, err := d.client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: &d.tableName,
 		Key: map[string]ddbtypes.AttributeValue{
@@ -73,27 +73,23 @@ func (d *DynamoDBStore) Get(ctx context.Context, id string) (*types.User, error)
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to get item from DynamoDB: %w", err)
-	}
-
-	if len(response.Item) == 0 {
-		return nil, nil
+		return nil, utils.ErrWithDB
 	}
 
 	user := types.User{}
 	err = attributevalue.UnmarshalMap(response.Item, &user)
 
 	if err != nil {
-		return nil, fmt.Errorf("error getting item %w", err)
+		return nil, utils.ErrWithDB
 	}
 
 	return &user, nil
 }
 
-func (d *DynamoDBStore) Create(ctx context.Context, user types.UserBody) error {
+func (d *DynamoDBStore) CreateUser(ctx context.Context, user types.UserBody) error {
 	item, err := attributevalue.MarshalMap(&user)
 	if err != nil {
-		return fmt.Errorf("unable to marshal user: %w", err)
+		return utils.ErrWithDB
 	}
 
 	id, _ := shortid.Generate()
@@ -105,13 +101,13 @@ func (d *DynamoDBStore) Create(ctx context.Context, user types.UserBody) error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("cannot put item: %w", err)
+		return utils.ErrWithDB
 	}
 
 	return nil
 }
 
-func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.UserBody) (*types.User, error) {
+func (d *DynamoDBStore) UpdateUserDetails(ctx context.Context, id string, user types.UserBody) (*types.User, error) {
 	address, _ := attributevalue.MarshalMap(user.Address)
 
 	response, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
@@ -130,7 +126,7 @@ func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.UserBo
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("cannot put item: %w", err)
+		return nil, utils.ErrWithDB
 	}
 
 	updatedUser := &types.User{}
@@ -139,7 +135,7 @@ func (d *DynamoDBStore) Update(ctx context.Context, id string, user types.UserBo
 	return updatedUser, nil
 }
 
-func (d *DynamoDBStore) Delete(ctx context.Context, id string) error {
+func (d *DynamoDBStore) DeleteUser(ctx context.Context, id string) error {
 	_, err := d.client.DeleteItem(ctx, &dynamodb.DeleteItemInput{
 		TableName: &d.tableName,
 		Key: map[string]ddbtypes.AttributeValue{
@@ -148,7 +144,7 @@ func (d *DynamoDBStore) Delete(ctx context.Context, id string) error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("can't delete item: %w", err)
+		return utils.ErrWithDB
 	}
 
 	return nil

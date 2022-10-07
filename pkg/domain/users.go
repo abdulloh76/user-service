@@ -19,7 +19,7 @@ func NewUsersDomain(d types.UserStore) *Users {
 }
 
 func (u *Users) GetUser(ctx context.Context, id string) (*types.User, error) {
-	user, err := u.store.Get(ctx, id)
+	user, err := u.store.GetUserDetails(ctx, id)
 	if user.ID == "" {
 		return nil, utils.ErrUserNotFound
 	}
@@ -30,7 +30,7 @@ func (u *Users) GetUser(ctx context.Context, id string) (*types.User, error) {
 }
 
 func (u *Users) AllUsers(ctx context.Context) ([]types.User, error) {
-	allUsers, err := u.store.All(ctx)
+	allUsers, err := u.store.AllUsers(ctx)
 	if err != nil {
 		return allUsers, err
 	}
@@ -44,7 +44,7 @@ func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.UserBody, e
 		return nil, utils.ErrJsonUnmarshal
 	}
 
-	err := u.store.Create(ctx, user)
+	err := u.store.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (u *Users) ModifyUser(ctx context.Context, id string, body []byte) (*types.
 		return nil, utils.ErrJsonUnmarshal
 	}
 
-	updatedUser, err := u.store.Update(ctx, id, modifiedUser)
+	updatedUser, err := u.store.UpdateUserDetails(ctx, id, modifiedUser)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (u *Users) ModifyUser(ctx context.Context, id string, body []byte) (*types.
 }
 
 func (u *Users) DeleteUser(ctx context.Context, id string) error {
-	err := u.store.Delete(ctx, id)
+	err := u.store.DeleteUser(ctx, id)
 	if err != nil {
 		return err
 	}

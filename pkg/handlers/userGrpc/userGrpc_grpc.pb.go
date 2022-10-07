@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.6.1
-// source: handlers/userGrpc/userGrpc.proto
+// source: pkg/handlers/userGrpc/userGrpc.proto
 
 package userGrpc
 
@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
-	GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*UserDetails, error)
 	GetUserAddress(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Address, error)
 }
 
@@ -34,8 +34,8 @@ func NewUserClient(cc grpc.ClientConnInterface) UserClient {
 	return &userClient{cc}
 }
 
-func (c *userClient) GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
-	out := new(GetResponse)
+func (c *userClient) GetUserDetails(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*UserDetails, error) {
+	out := new(UserDetails)
 	err := c.cc.Invoke(ctx, "/userGrpc.User/GetUserDetails", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (c *userClient) GetUserAddress(ctx context.Context, in *GetRequest, opts ..
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
 type UserServer interface {
-	GetUserDetails(context.Context, *GetRequest) (*GetResponse, error)
+	GetUserDetails(context.Context, *GetRequest) (*UserDetails, error)
 	GetUserAddress(context.Context, *GetRequest) (*Address, error)
 	mustEmbedUnimplementedUserServer()
 }
@@ -65,7 +65,7 @@ type UserServer interface {
 type UnimplementedUserServer struct {
 }
 
-func (UnimplementedUserServer) GetUserDetails(context.Context, *GetRequest) (*GetResponse, error) {
+func (UnimplementedUserServer) GetUserDetails(context.Context, *GetRequest) (*UserDetails, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserDetails not implemented")
 }
 func (UnimplementedUserServer) GetUserAddress(context.Context, *GetRequest) (*Address, error) {
@@ -137,5 +137,5 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "handlers/userGrpc/userGrpc.proto",
+	Metadata: "pkg/handlers/userGrpc/userGrpc.proto",
 }
