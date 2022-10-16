@@ -1,51 +1,31 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
+Globals:
+  Function:
+    MemorySize: 128
+    Architectures: ["arm64"]
+    Handler: bootstrap
+    Runtime: provided.al2
+    Timeout: 25
+    Tracing: Active
+
 Resources:
   AuthorizerFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      FunctionName: Authorizer
-      Description: middleware on apigateway to parse token
-      Code:
-        S3Bucket: arn:aws:s3:::invoice-user-service
-        S3Key: authorizer.zip
-        S3ObjectVersion: latest-lambda-version
-      Runtime: provided.al2
+      CodeUri: functions/authorizer/
       Role: arn:aws:iam::227833266304:role/user-invoice
-      Architectures: ["arm64"]
-      Handler: functions/authorizer/bootstrap
-      MemorySize: 128
-      Timeout: 30
       
   SignInFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      FunctionName: SignIn
-      Description: sign in function generates token for user
-      Code:
-        S3Bucket: arn:aws:s3:::invoice-user-service
-        S3Key: signin.zip
-        S3ObjectVersion: latest-lambda-version
-      Runtime: provided.al2
+      CodeUri: functions/signin/
       Role: arn:aws:iam::227833266304:role/user-invoice
-      Architectures: ["arm64"]
-      Handler: functions/signin/bootstrap
-      MemorySize: 128
-      Timeout: 30
+
 
   SignUpFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
-      FunctionName: SignUp
-      Description: sign up function creates user in db
-      Code:
-        S3Bucket: arn:aws:s3:::invoice-user-service
-        S3Key: signup.zip
-        S3ObjectVersion: latest-lambda-version
-      Runtime: provided.al2
+      CodeUri: functions/signup/
       Role: arn:aws:iam::227833266304:role/user-invoice
-      Architectures: ["arm64"]
-      Handler: functions/signup/bootstrap
-      MemorySize: 128
-      Timeout: 30
