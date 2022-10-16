@@ -1,5 +1,6 @@
 .PHONY: clean build deploy
 
+STACK_NAME ?= invoice-user-auth
 FUNCTIONS := authorizer signin signup
 
 # To try different version of Go
@@ -23,9 +24,17 @@ run-grpc:
 
 build-lambdas:
 	${MAKE} ${MAKEOPTS} $(foreach function,${FUNCTIONS}, build-${function})
+build-%:
+	cd functions/$* && GOOS=linux GOARCH=arm64 CGO_ENABLED=0 ${GO} build -o bootstrap
 
 clean:
 	@rm $(foreach function,${FUNCTIONS}, functions/${function}/bootstrap)
+
+deploy:
+	if [ -f samconfig.toml ]; \
+		then sam deploy --stack-name ${STACK_NAME}; \
+		else sam deploy -g --stack-name ${STACK_NAME}; \
+	fi
 
 
 invoke-authorizer:
