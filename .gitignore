@@ -18,3 +18,5 @@
 bin/
 my-dynamodb-data/
 
+bootstrap
+samconfig.toml
