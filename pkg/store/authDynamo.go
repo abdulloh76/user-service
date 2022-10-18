@@ -42,7 +42,7 @@ func NewAuthDynamoStore(ctx context.Context, DYNAMODB_PORT, tableName string) *A
 	}
 }
 
-func (d *AuthDynamoStore) CreateUser(ctx context.Context, userCredentials types.UserCredentials) (string, error) {
+func (d *AuthDynamoStore) CreateUser(ctx context.Context, userCredentials types.SignInCredentials) (string, error) {
 	credentials, err := attributevalue.MarshalMap(&userCredentials)
 	if err != nil {
 		return "", utils.ErrJsonUnmarshal
