@@ -26,44 +26,52 @@ func (u *Users) GetUser(ctx context.Context, id string) (*types.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	// todo map the return object so password won't be sent with the user details
 	return user, nil
 }
 
-func (u *Users) AllUsers(ctx context.Context) ([]types.User, error) {
-	allUsers, err := u.store.AllUsers(ctx)
-	if err != nil {
-		return allUsers, err
+func (u *Users) UpdateUserCredentials(ctx context.Context, id string, body []byte) error {
+	credentials := types.UpdateCredentialsDto{}
+	if err := json.Unmarshal(body, &credentials); err != nil {
+		return utils.ErrJsonUnmarshal
 	}
 
-	return allUsers, nil
+	err := u.store.UpdateUserCredentials(ctx, id, credentials)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (u *Users) CreateUser(ctx context.Context, body []byte) (*types.UserBody, error) {
-	user := types.UserBody{}
-	if err := json.Unmarshal(body, &user); err != nil {
-		return nil, utils.ErrJsonUnmarshal
+func (u *Users) UpdatePassword(ctx context.Context, id string, body []byte) error {
+	passwords := types.UpdatePasswordDto{}
+	if err := json.Unmarshal(body, &passwords); err != nil {
+		return utils.ErrJsonUnmarshal
 	}
 
-	err := u.store.CreateUser(ctx, user)
+	// todo check that current password hash matches with the one from db
+
+	err := u.store.UpdatePassword(ctx, id, passwords.NewPassword)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &user, nil
+	return nil
 }
 
-func (u *Users) ModifyUser(ctx context.Context, id string, body []byte) (*types.User, error) {
-	modifiedUser := types.UserBody{}
-	if err := json.Unmarshal(body, &modifiedUser); err != nil {
-		return nil, utils.ErrJsonUnmarshal
+func (u *Users) UpdateAddress(ctx context.Context, id string, body []byte) error {
+	newAddress := types.AddressModel{}
+	if err := json.Unmarshal(body, &newAddress); err != nil {
+		return utils.ErrJsonUnmarshal
 	}
 
-	updatedUser, err := u.store.UpdateUserDetails(ctx, id, modifiedUser)
+	err := u.store.UpdateAddress(ctx, id, newAddress)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return updatedUser, nil
+	return nil
 }
 
 func (u *Users) DeleteUser(ctx context.Context, id string) error {
