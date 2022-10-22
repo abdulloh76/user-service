@@ -21,13 +21,8 @@ type DynamoDBStore struct {
 
 var _ types.UserStore = (*DynamoDBStore)(nil)
 
-func NewDynamoDBStore(ctx context.Context, DYNAMODB_PORT, tableName string) *DynamoDBStore {
-	cfg, err := config.LoadDefaultConfig(ctx,
-		config.WithRegion("localhost"),
-		config.WithEndpointResolver(aws.EndpointResolverFunc(
-			func(service, region string) (aws.Endpoint, error) {
-				return aws.Endpoint{URL: "http://localhost:" + DYNAMODB_PORT}, nil
-			})))
+func NewDynamoDBStore(ctx context.Context, tableName string) *DynamoDBStore {
+	cfg, err := config.LoadDefaultConfig(ctx)
 
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)

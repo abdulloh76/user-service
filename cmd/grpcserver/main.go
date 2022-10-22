@@ -15,10 +15,9 @@ import (
 
 func main() {
 	PORT := os.Getenv("PORT")
-	DYNAMODB_PORT := os.Getenv("DYNAMODB_PORT")
 	tableName := "users"
 
-	dynamoDB := store.NewDynamoDBStore(context.TODO(), DYNAMODB_PORT, tableName)
+	dynamoDB := store.NewDynamoDBStore(context.TODO(), tableName)
 	domain := domain.NewUsersDomain(dynamoDB)
 	grpcServer := handlers.NewGRPCServer(domain)
 
