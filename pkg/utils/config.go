@@ -5,7 +5,8 @@ import (
 )
 
 type ConfigStruct struct {
-	PORT              string
+	SERVER_PORT       string
+	GRPC_PORT         string
 	DYNAMO_TABLE_NAME string
 }
 
@@ -20,7 +21,8 @@ func LoadConfig(configPath, configName, configType string) *ConfigStruct {
 	}
 
 	return &ConfigStruct{
-		PORT:              viper.GetString("PORT"),
+		SERVER_PORT:       viper.GetString("SERVER_PORT"),
+		GRPC_PORT:         viper.GetString("GRPC_PORT"),
 		DYNAMO_TABLE_NAME: viper.GetString("DYNAMO_TABLE_NAME"),
 	}
 }

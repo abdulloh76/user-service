@@ -21,5 +21,5 @@ func main() {
 
 	handlers.RegisterHandlers(router, handler)
 
-	router.Run(":" + configs.PORT)
+	router.Run(":" + configs.SERVER_PORT)
 }

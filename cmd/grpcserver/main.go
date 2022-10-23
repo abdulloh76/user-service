@@ -23,7 +23,7 @@ func main() {
 	s := grpc.NewServer()
 	userGrpc.RegisterUserServer(s, grpcServer)
 
-	l, err := net.Listen("tcp", ":"+configs.PORT)
+	l, err := net.Listen("tcp", ":"+configs.GRPC_PORT)
 	if err != nil {
 		log.Fatal(err)
 	}
