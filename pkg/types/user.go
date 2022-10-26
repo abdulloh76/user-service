@@ -17,6 +17,6 @@ type AddressModel struct {
 }
 
 type SignInCredentials struct {
-	Email    string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `dynamodbav:"email" json:"email" binding:"required"`
+	Password string `dynamodbav:"password" json:"password" binding:"required"`
 }
