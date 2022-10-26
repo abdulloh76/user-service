@@ -1,0 +1,20 @@
+{
+  "AuthorizerFunction": {
+    "SERVER_PORT": "8080",
+    "GRPC_PORT": "8081",
+    "DYNAMODB_PORT": "8000",
+    "DYNAMO_TABLE_NAME": "users"
+  },
+  "SignInFunction": {
+    "SERVER_PORT": "8080",
+    "GRPC_PORT": "8081",
+    "DYNAMODB_PORT": "8000",
+    "DYNAMO_TABLE_NAME": "users"
+  },
+  "SignUpFunction": {
+    "SERVER_PORT": "8080",
+    "GRPC_PORT": "8081",
+    "DYNAMODB_PORT": "8000",
+    "DYNAMO_TABLE_NAME": "users"
+  }
+}
