@@ -51,18 +51,22 @@ func (g *AuthApiHandler) SignIn(ctx context.Context, event events.APIGatewayProx
 	return utils.Response(http.StatusOK, map[string]string{"token": token}), nil
 }
 
-func (g *AuthApiHandler) AuthMiddleware(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (g *AuthApiHandler) AuthMiddleware(ctx context.Context, event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
 	if strings.TrimSpace(event.Headers["token"]) == "" {
-		return utils.ErrResponse(http.StatusBadRequest, "there is no token in headers"), nil
+		return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Unauthorized")
 	}
 
 	userId, err := g.auth.ParseToken(event.Headers["token"])
-	if err != nil {
+	if err != nil || event.PathParameters["id"] != userId {
 		if errors.Is(err, utils.ErrInvalidJWTMethod) || errors.Is(err, utils.ErrInvalidTokenClaims) {
-			return utils.ErrResponse(http.StatusBadRequest, err.Error()), nil
+			return events.APIGatewayCustomAuthorizerResponse{}, err
 		}
-		return utils.ErrResponse(http.StatusInternalServerError, err.Error()), nil
+		return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Unauthorized")
 	}
 
-	return utils.Response(http.StatusOK, map[string]string{"userId": userId}), nil
+	return events.APIGatewayCustomAuthorizerResponse{
+		PrincipalID: userId,
+		Context: map[string]interface{}{
+			"userId": userId,
+		}}, nil
 }
