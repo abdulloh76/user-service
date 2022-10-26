@@ -9,6 +9,9 @@ Globals:
     Runtime: provided.al2
     Timeout: 25
     Tracing: Active
+    Environment:
+      Variables:
+        DYNAMO_TABLE_NAME: users
 
 Resources:
   AuthorizerFunction:
