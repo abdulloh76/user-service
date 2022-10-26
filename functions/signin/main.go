@@ -11,10 +11,9 @@ import (
 )
 
 func main() {
-	DYNAMODB_PORT := os.Getenv("DYNAMODB_PORT")
-	tableName := "users"
+	DYNAMO_TABLE_NAME := os.Getenv("DYNAMO_TABLE_NAME")
 
-	dynamoDB := store.NewAuthDynamoStore(context.TODO(), DYNAMODB_PORT, tableName)
+	dynamoDB := store.NewAuthDynamoStore(context.TODO(), DYNAMO_TABLE_NAME)
 	domain := domain.NewAuthDomain(dynamoDB)
 	handler := handlers.NewAuthApiHandler(domain)
 
