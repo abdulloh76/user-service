@@ -57,7 +57,7 @@ func (g *AuthApiHandler) AuthMiddleware(ctx context.Context, event events.APIGat
 	}
 
 	userId, err := g.auth.ParseToken(event.Headers["token"])
-	if err != nil || event.PathParameters["id"] != userId {
+	if err != nil {
 		if errors.Is(err, utils.ErrInvalidJWTMethod) || errors.Is(err, utils.ErrInvalidTokenClaims) {
 			return events.APIGatewayCustomAuthorizerResponse{}, err
 		}
