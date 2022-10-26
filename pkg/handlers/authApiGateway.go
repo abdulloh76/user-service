@@ -52,11 +52,11 @@ func (g *AuthApiHandler) SignIn(ctx context.Context, event events.APIGatewayProx
 }
 
 func (g *AuthApiHandler) AuthMiddleware(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	if strings.TrimSpace(event.Body) == "" {
-		return utils.ErrResponse(http.StatusBadRequest, "empty request body"), nil
+	if strings.TrimSpace(event.Headers["token"]) == "" {
+		return utils.ErrResponse(http.StatusBadRequest, "there is no token in headers"), nil
 	}
 
-	token, err := g.auth.ParseToken([]byte(event.Body))
+	userId, err := g.auth.ParseToken(event.Headers["token"])
 	if err != nil {
 		if errors.Is(err, utils.ErrInvalidJWTMethod) || errors.Is(err, utils.ErrInvalidTokenClaims) {
 			return utils.ErrResponse(http.StatusBadRequest, err.Error()), nil
@@ -64,5 +64,5 @@ func (g *AuthApiHandler) AuthMiddleware(ctx context.Context, event events.APIGat
 		return utils.ErrResponse(http.StatusInternalServerError, err.Error()), nil
 	}
 
-	return utils.Response(http.StatusOK, map[string]string{"token": token}), nil
+	return utils.Response(http.StatusOK, map[string]string{"userId": userId}), nil
 }

@@ -65,16 +65,8 @@ func (a *AuthDomain) GenerateToken(ctx context.Context, body []byte) (string, er
 	return token.SignedString([]byte(signingKey))
 }
 
-func (a *AuthDomain) ParseToken(body []byte) (string, error) {
-	type tokenReqBody struct {
-		token string
-	}
-	reqBody := tokenReqBody{}
-	if err := json.Unmarshal(body, &reqBody); err != nil {
-		return "", utils.ErrJsonUnmarshal
-	}
-
-	token, err := jwt.ParseWithClaims(reqBody.token, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (a *AuthDomain) ParseToken(authToken string) (string, error) {
+	token, err := jwt.ParseWithClaims(authToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, utils.ErrInvalidJWTMethod
 		}

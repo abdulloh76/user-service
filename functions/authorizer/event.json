@@ -1,5 +1,4 @@
 {
-  "body": "{\"email\":\"johnwick@mail.com\",\"password\":\"password\",\"firstName\":\"John Wick\"}",
   "isBase64Encoded": true,
   "queryStringParameters": {
     "foo": "bar"
@@ -8,5 +7,8 @@
     "foo": [
       "bar"
     ]
+  },
+  "headers": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjY5NTE0OTAsImlhdCI6MTY2Njc3ODY5MCwidXNlcl9pZCI6ImExUXliY0g0ZyJ9.XEppYP6ehljYqKKdgs49G3x-Wm8L19wMiYdoitQqNlU"
   }
 }

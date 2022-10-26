@@ -38,7 +38,7 @@ deploy:
 
 
 invoke-authorizer:
-	@sam local invoke --env-vars env-vars.json --event functions/authorizer/event.json AuthMiddlewareFunction
+	@sam local invoke --env-vars env-vars.json --event functions/authorizer/event.json AuthorizerFunction
 invoke-signin:
 	@sam local invoke --env-vars env-vars.json --event functions/signin/event.json SignInFunction
 invoke-signup:
