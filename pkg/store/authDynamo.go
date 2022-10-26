@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -22,13 +21,8 @@ type AuthDynamoStore struct {
 
 var _ types.AuthStore = (*AuthDynamoStore)(nil)
 
-func NewAuthDynamoStore(ctx context.Context, DYNAMODB_PORT, tableName string) *AuthDynamoStore {
-	cfg, err := config.LoadDefaultConfig(ctx,
-		config.WithRegion("localhost"),
-		config.WithEndpointResolver(aws.EndpointResolverFunc(
-			func(service, region string) (aws.Endpoint, error) {
-				return aws.Endpoint{URL: "http://localhost:" + DYNAMODB_PORT}, nil
-			})))
+func NewAuthDynamoStore(ctx context.Context, tableName string) *AuthDynamoStore {
+	cfg, err := config.LoadDefaultConfig(ctx)
 
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)
