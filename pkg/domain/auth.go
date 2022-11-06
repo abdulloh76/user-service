@@ -34,7 +34,7 @@ func NewAuthDomain(d types.AuthStore) *AuthDomain {
 }
 
 func (a *AuthDomain) CreateUser(ctx context.Context, body []byte) (string, error) {
-	userCredentials := types.UserCredentials{}
+	userCredentials := types.SignInCredentials{}
 	if err := json.Unmarshal(body, &userCredentials); err != nil {
 		return "", utils.ErrJsonUnmarshal
 	}
@@ -44,7 +44,7 @@ func (a *AuthDomain) CreateUser(ctx context.Context, body []byte) (string, error
 }
 
 func (a *AuthDomain) GenerateToken(ctx context.Context, body []byte) (string, error) {
-	userCredentials := types.UserCredentials{}
+	userCredentials := types.SignInCredentials{}
 	if err := json.Unmarshal(body, &userCredentials); err != nil {
 		return "", utils.ErrJsonUnmarshal
 	}

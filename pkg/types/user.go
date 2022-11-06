@@ -16,7 +16,7 @@ type AddressModel struct {
 	Country  string `json:"country"`
 }
 
-type UserCredentials struct {
+type SignInCredentials struct {
 	Email    string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }

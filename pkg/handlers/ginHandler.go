@@ -22,23 +22,11 @@ func NewGinAPIHandler(d *domain.Users) *GinAPIHandler {
 }
 
 func RegisterHandlers(router *gin.Engine, handler *GinAPIHandler) {
-	router.POST("/user", handler.CreateHandler)
-	router.GET("/user", handler.AllHandler)
 	router.GET("/user/:id", handler.GetHandler)
-	router.PUT("/user/:id", handler.PutHandler)
+	router.PUT("/user/:id/credentials", handler.UpdateUserCredentialsHandler)
+	router.PUT("/user/:id/password", handler.UpdatePasswordHandler)
+	router.PUT("/user/:id/credentials", handler.UpdateAddressHandler)
 	router.DELETE("/user/:id", handler.DeleteHandler)
-}
-
-func (g *GinAPIHandler) AllHandler(context *gin.Context) {
-	allUsers, err := g.users.AllUsers(context)
-	if err != nil {
-		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
-			"message": err.Error(),
-		})
-		return
-	}
-
-	context.JSON(http.StatusOK, allUsers)
 }
 
 func (g *GinAPIHandler) GetHandler(context *gin.Context) {
@@ -62,33 +50,7 @@ func (g *GinAPIHandler) GetHandler(context *gin.Context) {
 	context.JSON(http.StatusOK, user)
 }
 
-func (g *GinAPIHandler) CreateHandler(context *gin.Context) {
-	body, err := io.ReadAll(context.Request.Body)
-	if err != nil {
-		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
-			"message": err.Error(),
-		})
-		return
-	}
-
-	newUser, err := g.users.CreateUser(context, body)
-	if errors.Is(err, utils.ErrJsonUnmarshal) {
-		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
-			"message": err.Error(),
-		})
-		return
-	}
-	if err != nil {
-		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
-			"message": err.Error(),
-		})
-		return
-	}
-
-	context.JSON(http.StatusOK, newUser)
-}
-
-func (g *GinAPIHandler) PutHandler(context *gin.Context) {
+func (g *GinAPIHandler) UpdatePasswordHandler(context *gin.Context) {
 	id := context.Param("id")
 
 	body, err := io.ReadAll(context.Request.Body)
@@ -96,7 +58,7 @@ func (g *GinAPIHandler) PutHandler(context *gin.Context) {
 		log.Fatal(err)
 	}
 
-	updatedUser, err := g.users.ModifyUser(context, id, body)
+	err = g.users.UpdatePassword(context, id, body)
 	if errors.Is(err, utils.ErrUserNotFound) {
 		context.AbortWithStatusJSON(http.StatusNotFound, map[string]string{
 			"message": err.Error(),
@@ -116,7 +78,74 @@ func (g *GinAPIHandler) PutHandler(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, updatedUser)
+	context.JSON(http.StatusOK, map[string]string{
+		"message": "success", // todo double check
+	})
+}
+
+func (g *GinAPIHandler) UpdateAddressHandler(context *gin.Context) {
+	id := context.Param("id")
+
+	body, err := io.ReadAll(context.Request.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = g.users.UpdateAddress(context, id, body)
+	if errors.Is(err, utils.ErrUserNotFound) {
+		context.AbortWithStatusJSON(http.StatusNotFound, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	if errors.Is(err, utils.ErrJsonUnmarshal) {
+		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	if err != nil {
+		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, map[string]string{
+		"message": "success", // todo double check
+	})
+}
+
+func (g *GinAPIHandler) UpdateUserCredentialsHandler(context *gin.Context) {
+	id := context.Param("id")
+
+	body, err := io.ReadAll(context.Request.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = g.users.UpdateUserCredentials(context, id, body)
+	if errors.Is(err, utils.ErrUserNotFound) {
+		context.AbortWithStatusJSON(http.StatusNotFound, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	if errors.Is(err, utils.ErrJsonUnmarshal) {
+		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	if err != nil {
+		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, map[string]string{
+		"message": "success", // todo double check
+	})
 }
 
 func (g *GinAPIHandler) DeleteHandler(context *gin.Context) {

@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/teris-io/shortid"
 
 	"github.com/abdulloh76/user-service/pkg/types"
 	"github.com/abdulloh76/user-service/pkg/utils"
@@ -42,28 +41,6 @@ func NewDynamoDBStore(ctx context.Context, DYNAMODB_PORT, tableName string) *Dyn
 	}
 }
 
-func (d *DynamoDBStore) AllUsers(ctx context.Context) ([]types.User, error) {
-	users := []types.User{}
-
-	input := &dynamodb.ScanInput{
-		TableName: &d.tableName,
-		Limit:     aws.Int32(20),
-	}
-
-	result, err := d.client.Scan(ctx, input)
-
-	if err != nil {
-		return nil, utils.ErrWithDB
-	}
-
-	err = attributevalue.UnmarshalListOfMaps(result.Items, &users)
-	if err != nil {
-		return users, utils.ErrWithDB
-	}
-
-	return users, nil
-}
-
 func (d *DynamoDBStore) GetUserDetails(ctx context.Context, id string) (*types.User, error) {
 	response, err := d.client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: &d.tableName,
@@ -86,18 +63,19 @@ func (d *DynamoDBStore) GetUserDetails(ctx context.Context, id string) (*types.U
 	return &user, nil
 }
 
-func (d *DynamoDBStore) CreateUser(ctx context.Context, user types.UserBody) error {
-	item, err := attributevalue.MarshalMap(&user)
-	if err != nil {
-		return utils.ErrWithDB
-	}
-
-	id, _ := shortid.Generate()
-	item["id"] = &ddbtypes.AttributeValueMemberS{Value: id}
-
-	_, err = d.client.PutItem(ctx, &dynamodb.PutItemInput{
+func (d *DynamoDBStore) UpdateUserCredentials(ctx context.Context, id string, credentials types.UpdateCredentialsDto) error {
+	_, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
 		TableName: &d.tableName,
-		Item:      item,
+		Key: map[string]ddbtypes.AttributeValue{
+			"id": &ddbtypes.AttributeValueMemberS{Value: id},
+		},
+		ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
+			":fn": &ddbtypes.AttributeValueMemberS{Value: credentials.FirstName},
+			":ln": &ddbtypes.AttributeValueMemberS{Value: credentials.LastName},
+			":e":  &ddbtypes.AttributeValueMemberS{Value: credentials.Email},
+		},
+		UpdateExpression: aws.String("set firstName=:fn, lastName=:ln, email=:e"),
+		ReturnValues:     "ALL_NEW", // !!! why new?
 	})
 
 	if err != nil {
@@ -107,32 +85,46 @@ func (d *DynamoDBStore) CreateUser(ctx context.Context, user types.UserBody) err
 	return nil
 }
 
-func (d *DynamoDBStore) UpdateUserDetails(ctx context.Context, id string, user types.UserBody) (*types.User, error) {
-	address, _ := attributevalue.MarshalMap(user.Address)
-
-	response, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+func (d *DynamoDBStore) UpdatePassword(ctx context.Context, id string, newPasswordHash string) error {
+	_, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
 		TableName: &d.tableName,
 		Key: map[string]ddbtypes.AttributeValue{
 			"id": &ddbtypes.AttributeValueMemberS{Value: id},
 		},
 		ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
-			":fn":  &ddbtypes.AttributeValueMemberS{Value: user.FirstName},
-			":ln":  &ddbtypes.AttributeValueMemberS{Value: user.LastName},
-			":e":   &ddbtypes.AttributeValueMemberS{Value: user.Email},
-			":add": &ddbtypes.AttributeValueMemberM{Value: address},
+			":pwd": &ddbtypes.AttributeValueMemberS{Value: newPasswordHash},
 		},
-		UpdateExpression: aws.String("set firstName=:fn, lastName=:ln, email=:e, address=:add"),
-		ReturnValues:     "ALL_NEW",
+		UpdateExpression: aws.String("set password=:pwd"),
+		ReturnValues:     "ALL_NEW", // !!! why new?
 	})
 
 	if err != nil {
-		return nil, utils.ErrWithDB
+		return utils.ErrWithDB
 	}
 
-	updatedUser := &types.User{}
-	attributevalue.UnmarshalMap(response.Attributes, &updatedUser)
+	return nil
+}
 
-	return updatedUser, nil
+func (d *DynamoDBStore) UpdateAddress(ctx context.Context, id string, address types.AddressModel) error {
+	newAddress, _ := attributevalue.MarshalMap(address)
+
+	_, err := d.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+		TableName: &d.tableName,
+		Key: map[string]ddbtypes.AttributeValue{
+			"id": &ddbtypes.AttributeValueMemberS{Value: id},
+		},
+		ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
+			":add": &ddbtypes.AttributeValueMemberM{Value: newAddress},
+		},
+		UpdateExpression: aws.String("set address=:add"),
+		ReturnValues:     "ALL_NEW", // !!! why new?
+	})
+
+	if err != nil {
+		return utils.ErrWithDB
+	}
+
+	return nil
 }
 
 func (d *DynamoDBStore) DeleteUser(ctx context.Context, id string) error {
