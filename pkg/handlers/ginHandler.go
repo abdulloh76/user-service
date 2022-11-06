@@ -22,11 +22,11 @@ func NewGinAPIHandler(d *domain.Users) *GinAPIHandler {
 }
 
 func RegisterHandlers(router *gin.Engine, handler *GinAPIHandler) {
-	router.GET("/user/:id", handler.GetHandler)
-	router.PUT("/user/:id/credentials", handler.UpdateUserCredentialsHandler)
-	router.PUT("/user/:id/password", handler.UpdatePasswordHandler)
-	router.PUT("/user/:id/credentials", handler.UpdateAddressHandler)
-	router.DELETE("/user/:id", handler.DeleteHandler)
+	router.GET("/:id", handler.GetHandler)
+	router.PUT("/:id/credentials", handler.UpdateUserCredentialsHandler)
+	router.PUT("/:id/password", handler.UpdatePasswordHandler)
+	router.PUT("/:id/credentials", handler.UpdateAddressHandler)
+	router.DELETE("/:id", handler.DeleteHandler)
 }
 
 func (g *GinAPIHandler) GetHandler(context *gin.Context) {

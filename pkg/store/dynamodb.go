@@ -36,19 +36,19 @@ func NewDynamoDBStore(ctx context.Context, tableName string) *DynamoDBStore {
 	}
 }
 
-func (d *DynamoDBStore) GetUserDetails(ctx context.Context, id string) (*types.User, error) {
+func (d *DynamoDBStore) GetUserDetails(ctx context.Context, id string) (*types.UserBody, error) {
 	response, err := d.client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: &d.tableName,
 		Key: map[string]ddbtypes.AttributeValue{
 			"id": &ddbtypes.AttributeValueMemberS{Value: id},
 		},
 	})
-	// todo event.PathParameters["id"] != userId
+
 	if err != nil {
 		return nil, utils.ErrWithDB
 	}
 
-	user := types.User{}
+	user := types.UserBody{}
 	err = attributevalue.UnmarshalMap(response.Item, &user)
 
 	if err != nil {

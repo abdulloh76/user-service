@@ -52,11 +52,11 @@ func (g *AuthApiHandler) SignIn(ctx context.Context, event events.APIGatewayProx
 }
 
 func (g *AuthApiHandler) AuthMiddleware(ctx context.Context, event events.APIGatewayCustomAuthorizerRequestTypeRequest) (events.APIGatewayV2CustomAuthorizerSimpleResponse, error) {
-	if strings.TrimSpace(event.Headers["token"]) == "" {
+	if strings.TrimSpace(event.Headers["authorization"]) == "" {
 		return events.APIGatewayV2CustomAuthorizerSimpleResponse{IsAuthorized: false}, errors.New("token not provided")
 	}
 
-	userId, err := g.auth.ParseToken(event.Headers["token"])
+	userId, err := g.auth.ParseToken(event.Headers["authorization"])
 	if err != nil {
 		if errors.Is(err, utils.ErrInvalidJWTMethod) || errors.Is(err, utils.ErrInvalidTokenClaims) {
 			return events.APIGatewayV2CustomAuthorizerSimpleResponse{IsAuthorized: false}, err

@@ -18,15 +18,14 @@ func NewUsersDomain(d types.UserStore) *Users {
 	}
 }
 
-func (u *Users) GetUser(ctx context.Context, id string) (*types.User, error) {
+func (u *Users) GetUser(ctx context.Context, id string) (*types.UserBody, error) {
 	user, err := u.store.GetUserDetails(ctx, id)
-	if user.ID == "" {
+	if user.Email == "" {
 		return nil, utils.ErrUserNotFound
 	}
 	if err != nil {
 		return nil, err
 	}
-	// todo map the return object so password won't be sent with the user details
 	return user, nil
 }
 
