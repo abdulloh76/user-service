@@ -25,7 +25,7 @@ func RegisterHandlers(router *gin.Engine, handler *GinAPIHandler) {
 	router.GET("/:id", handler.GetHandler)
 	router.PUT("/:id/credentials", handler.UpdateUserCredentialsHandler)
 	router.PUT("/:id/password", handler.UpdatePasswordHandler)
-	router.PUT("/:id/credentials", handler.UpdateAddressHandler)
+	router.PUT("/:id/address", handler.UpdateAddressHandler)
 	router.DELETE("/:id", handler.DeleteHandler)
 }
 
