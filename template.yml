@@ -19,13 +19,12 @@ Resources:
     Properties:
       CodeUri: functions/authorizer/
       Role: arn:aws:iam::227833266304:role/user-invoice
-      
+
   SignInFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: functions/signin/
       Role: arn:aws:iam::227833266304:role/user-invoice
-
 
   SignUpFunction:
     Type: AWS::Serverless::Function
