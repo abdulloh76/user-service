@@ -43,7 +43,7 @@ func (d *DynamoDBStore) GetUserDetails(ctx context.Context, id string) (*types.U
 			"id": &ddbtypes.AttributeValueMemberS{Value: id},
 		},
 	})
-
+	// todo event.PathParameters["id"] != userId
 	if err != nil {
 		return nil, utils.ErrWithDB
 	}

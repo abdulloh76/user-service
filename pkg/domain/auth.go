@@ -38,6 +38,7 @@ func (a *AuthDomain) CreateUser(ctx context.Context, body []byte) (string, error
 	if err := json.Unmarshal(body, &userCredentials); err != nil {
 		return "", utils.ErrJsonUnmarshal
 	}
+	// todo what if user with this email already exists?
 
 	userCredentials.Password = generatePasswordHash(userCredentials.Password)
 	return a.store.CreateUser(ctx, userCredentials)
