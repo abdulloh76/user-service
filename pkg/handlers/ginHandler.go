@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -22,14 +23,16 @@ func NewGinAPIHandler(d *domain.Users) *GinAPIHandler {
 }
 
 func RegisterHandlers(router *gin.Engine, handler *GinAPIHandler) {
-	router.GET("/:id", handler.GetHandler)
-	router.PUT("/:id/credentials", handler.UpdateUserCredentialsHandler)
-	router.PUT("/:id/password", handler.UpdatePasswordHandler)
-	router.PUT("/:id/address", handler.UpdateAddressHandler)
-	router.DELETE("/:id", handler.DeleteHandler)
+	router.GET("/", handler.GetHandler)
+	router.PUT("/credentials", handler.UpdateUserCredentialsHandler)
+	router.PUT("/password", handler.UpdatePasswordHandler)
+	router.PUT("/address", handler.UpdateAddressHandler)
+	router.DELETE("/", handler.DeleteHandler)
 }
 
 func (g *GinAPIHandler) GetHandler(context *gin.Context) {
+	fmt.Println("userId from request context", context.Request.Context().Value("userId"))
+	fmt.Println("context itself", context.Request)
 	id := context.Param("id")
 
 	user, err := g.users.GetUser(context, id)
